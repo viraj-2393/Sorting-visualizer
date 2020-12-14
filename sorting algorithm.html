@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <link rel="stylesheet" type="text/css" href="sortingcss.css"/>
+  <title>Sorting visualizer</title>
+  <script src="algorithm/insertion.js"></script>
+ </head>
+ <body>
+   <div class="parent">
+    <!--this section will include the header of the page-->
+	  <div class="header">
+	    <div class="name"><h1>Sorting Visualizer</h1></div>
+		<div class="size">
+		  <label for="number">Size of Array:</label>
+		  <Select id="number" name="number" onchange="adjust()">
+		  <option>-</option>
+		   <option value="5">5</option>
+		   <option value="10">10</option>
+		   <option value="20">20</option>
+		   <option value="30">30</option>
+		  </select>
+		</div>
+		<div class="algorithm">
+		  <label for="algos" class="lab">Algorithms:</label>
+		  <select id="algos" name="algos">
+		    <option value="Bubble">Bubble Sort</option>
+			<option value="Selection">Selection Sort</option>
+			<option value="Insertion">Insertion Sort</option>
+		  </select>  
+		</div>
+		<div class="sort" id="sort">
+		 <button onclick="make_req()">Sort</button>
+		</div>
+	  </div>
+	<!--header section ends here-->
+	
+	<!--data to sort section starts here-->
+	<div class="parent_data">
+	  <div class="data" id="data">
+	   
+	  </div>
+	</div>
+	<!--data to sort section ends here-->
+   </div>
+ </body>
+ <script>
+ 
+ 
+ //declaring a sleep function to make program delay
+   const sleep = (milliseconds) => {
+      return new Promise(resolve => setTimeout(resolve, milliseconds))
+   }
+ //--------------------
+
+//---------------------------------------------------xxxxxxxxxxxxxxxxxxxxxxx-----------------------------------------------//
+ 
+  var arr = [];
+  var flag = 0;
+  
+  
+  //call this function when user wants to change the size of array or generate a new array of random integers
+	  function adjust(){
+	       //checking if the function is called for the second time if yes then remove all the dynamic child and empty the array
+			   if(flag == 1){
+			   for(var i = 0;i<cap2;i++){
+				var rem = 'container'+i;
+				var elem = document.getElementById(rem);
+				elem.parentNode.removeChild(elem);}
+				arr = [];
+			   }
+		   //------------------------------------
+		   
+		   //checking if the number is valid or not and then moving on with next step
+			   var cap = document.getElementById('number').value;
+			   if(cap != '-'){
+				cap2 = parseInt(cap);
+
+				//inserting random integers in the array upto the size recommended by the user
+					for(var j=0;j<cap2;j++){
+					  var val = Math.floor((Math.random()*100)+5);
+					  arr.push(val);
+					}
+				//----------------------------------
+				
+				//creating dynamic div to represend each number in the array as a block
+					for(var i =0;i<cap2;i++){
+					  var div = document.createElement('div');
+					  var temp = 'container'+i;
+					  div.id = 'container'+i;
+					  div.innerHTML = arr[i];
+					  div.className = 'border pad';
+					  s = document.getElementById('data');
+					  s.appendChild(div);
+					  document.getElementById(temp).style.height=(arr[i]*5)+"px";
+					  flag = 1;
+					  }
+				 //dynamic creation ends here 
+			  }
+		  //valid number checking ends here
+	  }
+  //adjust function ends here
+ 
+ //------------------------------------------------------xxxxxxxxxx----------------------------------------------------------//
+ 
+ 
+   const make_req = async() =>{
+     var way = document.getElementById('algos').value;
+	 //checking if the algorithm is bubble sorting
+	 if(way == 'Bubble'){
+	 
+	   //outer for loop starts here
+	   for(var i = 0; i < arr.length; i++){
+	     //inner for loop starts here
+	     for(var j = 0; j < arr.length-(i+1); j++){
+		 
+		   //declaring variables to target the current id of the div element
+			   var temp = 'container'+j;
+			   var temp2 = 'container'+(j+1);
+		   //-----------------------------
+		   
+		   //changing the color of each block to mediumseagreen
+			   document.getElementById(temp).style.backgroundColor="mediumseagreen";
+			   document.getElementById(temp2).style.backgroundColor="mediumseagreen";
+		   //----------------------------------
+		   
+		   //making the loop sleep for 100 milliseconds
+		       await sleep(100);
+		   //-----------------------
+		   
+		   //checking the condition if true making the required changes
+			   if(arr[j] > arr[j+1]){
+			   
+			       //making the current unsorted index background color to red
+					   temp = 'container'+j;
+					   temp2 = 'container'+(j+1);
+					   document.getElementById(temp).style.backgroundColor="red";
+					   document.getElementById(temp2).style.backgroundColor="red";
+				   //-------------------------
+				   
+				   //making the loop sleep for 100 milliseconds
+					   await sleep(100);
+		           //-----------------------
+				   
+				   //swap the variables
+					  var temp_arr = arr[j];
+					  arr[j] = arr[j+1];
+					  arr[j+1] = temp_arr;
+					  document.getElementById(temp).innerHTML=arr[j];
+					  document.getElementById(temp2).innerHTML=arr[j+1];
+				   //--------
+				   
+				   //changing the block height according to the new swapped array index 
+					   var t1 = (arr[j]*5)+"px";
+					   var t2 = (arr[j+1]*5)+"px";
+					   document.getElementById(temp).style.height= t1;
+					   document.getElementById(temp2).style.height=t2;
+				   //-------------------
+				   
+				   //giving its original color back
+						//document.getElementById(temp).style.backgroundColor="#42cbf5";
+						//document.getElementById(temp2).style.backgroundColor="#42cbf5";
+				   //----------
+			   }
+		   //----------------------------
+		   
+		   //giving its original color back
+                   document.getElementById('container'+j).style.backgroundColor="#42cbf5";
+				   document.getElementById('container'+(j+1)).style.backgroundColor="#42cbf5";
+		   //----------
+		   
+		 }
+		//inner for loop ends here 
+		
+	   }
+	   //outer for loop ends here
+	   
+	 }
+	 //algorithm checking ends here
+	 
+	 //selection sorting algorithm starts here
+       else if(way == "Selection"){
+	    var march = 0;
+		//outer for loop starts here
+	     for(var step = 0; step< arr.length ; step++){
+		              var min_idx = step;
+					  //inner for loop starts here
+					  for(var j = (step+1); j < arr.length+1; j++){
+							   min = 'container'+step;
+							   max = 'container'+min_idx;
+						if(arr[j] < arr[min_idx]){
+							   min_idx = j;
+							   max = 'container'+min_idx;
+							   
+								   document.getElementById(min).style.backgroundColor="mediumseagreen";
+								   document.getElementById(max).style.backgroundColor="red";
+								   await sleep(100);
+								   							
+						}
+								   
+					  }
+					  //inner for loop ends here
+		 
+           		      //swap the array variables
+						   var temp_arr = arr[step];
+						   arr[step] = arr[min_idx];
+						   arr[min_idx] = temp_arr;
+				      //--------
+		            
+					 //changing the block height according to the new swapped array index 
+						   var t1 = (arr[step]*5)+"px";
+						   var t2 = (arr[min_idx]*5)+"px";
+						   document.getElementById(min).style.height= t1;
+						   document.getElementById(max).style.height=t2;
+					 //-------------------------------------
+					 
+					   //after changing height we are going to change its content also
+						   document.getElementById(min).innerHTML= arr[step];
+						   document.getElementById(max).innerHTML= arr[min_idx];
+                       //-------------------					   
+					   //giving elements their original colors back
+						   document.getElementById(min).style.backgroundColor="#42cbf5";
+						   document.getElementById(max).style.backgroundColor="#42cbf5";
+					   //---------------------------
+				   //-------------------
+		 }
+		 //outer for loop ends here
+	   }
+    //selection sorting algorithm ends here
+	
+	//insertion sorting algorithm starts here
+	  else if(way == "Insertion"){
+
+  
+         //outer for loop starts here
+	     for(var i = 1; i< arr.length;i++){
+					 var key = arr[i];
+					 var j = i-1;
+					 while(j>=0 && key < arr[j]){
+					  key_chan = 'container'+(i);
+					  max = 'container'+(j);
+					  document.getElementById(key_chan).style.backgroundColor="mediumseagreen";
+					  document.getElementById(max).style.backgroundColor="red";
+					  arr[j+1] = arr[j];
+					  document.getElementById('container'+(j+1)).innerHTML=arr[j+1];
+					  document.getElementById('container'+(j+1)).style.height=(arr[j+1]*5)+"px";
+					  document.getElementById(max).innerHTML = arr[j];
+					  document.getElementById(max).style.height=(arr[j]*5)+"px";
+					  j--;
+					  await sleep(100);
+					 }
+					arr[j+1] = key;
+					var ano = 'container'+(j+1);
+					document.getElementById('container'+(i-1)).style.backgroundColor="#42cbf5";
+					document.getElementById(ano).style.height=(arr[j+1]*5)+"px";
+					document.getElementById(ano).innerHTML=arr[j+1];
+					
+					
+		 }
+		 }
+		 
+		 //outer for loop ends here
+	//insertion sorting algorithm ends here 
+	 
+   }
+ //main asynchronous function ends here
+ 
+ 
+  
+  
+//-----------------------------------------------------xxxxxxxxxxxxxxxxxxxxx-----------------------------------------------//
+
+
+
+
+ </script>
+</html>
